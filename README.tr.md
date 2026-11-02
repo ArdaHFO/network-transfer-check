@@ -1,9 +1,9 @@
-Bu proje, bağlantı hızını ölçmek için dosyaların nasıl gönderilip alındığını araştırır.
+Bu uygulama, bir web sayfası ve ayrı sunucu ölçümleri üzerinden dosya aktarım hızlarını kontrol eder.
 
-<h1 align="center">Network Transfer Lab</h1>
+<h1 align="center">Network Transfer Check</h1>
 
-<p align="center"><strong>Bir hız testinin nasıl çalıştığını incele.</strong></p>
-<p align="center">Tarayıcı zamanlama arayüzünü deneysel bir sunucu aktarım rotasıyla birleştiren Flask ders projesi prototipi.</p>
+<p align="center"><strong>Tarayıcı ve sunucu aktarım sürelerini karşılaştır.</strong></p>
+<p align="center">Tarayıcı zamanlama arayüzünü sunucu tarafındaki aktarım ölçümleriyle birleştiren Flask uygulaması.</p>
 
 <p align="center">
   <a href="README.md">English</a> · <strong>Türkçe</strong><br />
@@ -14,9 +14,9 @@ Bu proje, bağlantı hızını ölçmek için dosyaların nasıl gönderilip al�
 
 ---
 
-Bu repo, Kasım 2023 tarihli ders projesinden Python, HTML ve JavaScript tabanlı bir hız testi deneyi içerir. Tarayıcı arayüzü indirme, yükleme ve HTTP isteklerinin zamanlamasını inceler. Ayrı bir sunucu rotası daha büyük bir dosyanın indirilmesini ve speedtest-cli ile yükleme ölçümünü dener.
+Network Transfer Check, dosya aktarım sürelerini ölçmek için Python, HTML ve JavaScript kullanır. Tarayıcı arayüzü indirme, yükleme ve HTTP isteklerinin sürelerini ölçer. Ayrı bir sunucu rotası daha büyük bir dosyanın indirilmesini speedtest-cli yükleme ölçümüyle birleştirir.
 
-**Bu, deneysel bir ders projesi prototipidir.** Aktarım rotalarına, zamanlama hesaplarına ve sunucu sonuç şablonuna statik düzeltmeler uygulandı. Proje bir deney olarak kalır ve çıktıları bant genişliği ölçümü olarak doğrulanmadı.
+**Ölçüm doğruluğu henüz doğrulanmadı.** Aktarım rotalarına, zamanlama hesaplarına ve sunucu sonuç şablonuna statik düzeltmeler uygulandı. Çıktıların bant genişliği ölçümü olarak kullanılmadan önce kontrollü olarak doğrulanması gerekir.
 
 ## Yerel arayüzü çalıştır
 
@@ -27,8 +27,8 @@ Bu repo, Kasım 2023 tarihli ders projesinden Python, HTML ve JavaScript tabanl�
 | JavaScript destekli tarayıcı | Zamanlama arayüzü |
 
 ```text
-git clone https://github.com/ArdaHFO/network-transfer-lab.git
-cd network-transfer-lab
+git clone https://github.com/ArdaHFO/network-transfer-check.git
+cd network-transfer-check
 python -m venv .venv
 ```
 
@@ -47,7 +47,7 @@ python -m flask --app app run --host 127.0.0.1 --port 8000
 - **Özel sunucu indirmesi.** `speed_test` işlevi, yapılandırılmış dosyayı harici bir uç noktadan akış halinde indirir ve alınan baytları izler.
 - **Kütüphane karşılaştırması.** `POST /measure`, speedtest-cli ile yükleme ölçümü içerir ve ping sonucunu okur.
 - **Flask blueprint yapısı.** Küçük `views.py` modülü ek sayfa rotaları sağlar.
-- **Aktarım örnekleri.** Deneylerde kullanılabilecek çeşitli görsel dosyaları bulunur.
+- **Aktarım örnekleri.** Aktarım yükü olarak kullanılabilecek çeşitli görsel dosyaları bulunur.
 
 Sunucu kodu, özel aktarım ölçümüyle birlikte speedtest-cli kullanır.
 
@@ -79,7 +79,7 @@ Kaynak statik olarak incelendi. Bu değişiklikler için uygulama, otomatik test
 ## Proje yapısı
 
 ```text
-app.py                 Flask rotaları ve sunucu aktarım deneyi
+app.py                 Flask rotaları ve sunucu aktarım ölçümleri
 views.py               Ek sayfa rotaları
 templates/index.html   Tarayıcı zamanlama arayüzü
 templates/measure.html Sunucu aktarım sonuç ekranı

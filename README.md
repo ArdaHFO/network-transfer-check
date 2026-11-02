@@ -1,9 +1,9 @@
-This project explores how files are sent and received when measuring a connection speed.
+This app checks file transfer speeds through a web page and separate server measurements.
 
-<h1 align="center">Network Transfer Lab</h1>
+<h1 align="center">Network Transfer Check</h1>
 
-<p align="center"><strong>Explore the mechanics behind a speed test.</strong></p>
-<p align="center">A Flask coursework prototype combining a browser timing interface with an experimental server-side transfer route.</p>
+<p align="center"><strong>Compare browser and server transfer timings.</strong></p>
+<p align="center">A Flask application combining a browser timing interface with server-side transfer measurements.</p>
 
 <p align="center">
   <strong>English</strong> · <a href="README.tr.md">Türkçe</a><br />
@@ -14,9 +14,9 @@ This project explores how files are sent and received when measuring a connectio
 
 ---
 
-This repository contains a Python, HTML and JavaScript speed-test experiment from a November 2023 coursework project. Its browser interface explores timed downloads, uploads and HTTP requests. A separate server route experiments with a larger download and speedtest-cli upload measurement.
+Network Transfer Check uses Python, HTML and JavaScript to time file transfers. Its browser interface measures downloads, uploads and HTTP requests. A separate server route combines a larger download with speedtest-cli upload measurement.
 
-**This is an experimental coursework prototype.** Transfer routes, timing calculations and the server result template have received static fixes. The project remains an experiment whose output has not been validated as a bandwidth benchmark.
+**Measurement accuracy has not been validated.** Transfer routes, timing calculations and the server result template have received static fixes. The output still requires controlled validation before use as a bandwidth benchmark.
 
 ## Run the local interface
 
@@ -27,8 +27,8 @@ This repository contains a Python, HTML and JavaScript speed-test experiment fro
 | Browser with JavaScript | Timing interface |
 
 ```text
-git clone https://github.com/ArdaHFO/network-transfer-lab.git
-cd network-transfer-lab
+git clone https://github.com/ArdaHFO/network-transfer-check.git
+cd network-transfer-check
 python -m venv .venv
 ```
 
@@ -47,7 +47,7 @@ Open [localhost:8000](http://127.0.0.1:8000). The Flask CLI and the application 
 - **Custom server download.** The `speed_test` function streams a configured file from an external endpoint and tracks received bytes.
 - **Library comparison.** `POST /measure` includes a speedtest-cli upload measurement and reads its ping result.
 - **Flask blueprints.** A small `views.py` module provides additional page routes.
-- **Transfer fixtures.** Several image files are included for experimentation.
+- **Transfer fixtures.** Several image files are included as transfer payloads.
 
 The backend uses speedtest-cli alongside custom transfer measurement.
 
@@ -79,7 +79,7 @@ Controlled route checks and repeated transfer measurements are still needed befo
 ## Project map
 
 ```text
-app.py                 Flask routes and server transfer experiment
+app.py                 Flask routes and server transfer measurements
 views.py               Additional page routes
 templates/index.html   Browser timing interface
 templates/measure.html Server transfer result view
