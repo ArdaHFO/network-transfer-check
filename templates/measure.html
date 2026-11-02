@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Server transfer results</title></head>
+<body>
+  <h1>Server transfer results</h1>
+  <p>These measurements originate from the machine running Flask.</p>
+  <dl>
+    <dt>Downloaded payload</dt><dd>{{ download_datasize }}</dd>
+    <dt>Download duration</dt><dd>{{ download_datatime }}</dd>
+    <dt>Download rate</dt><dd>{{ download_speed }} Mbps</dd>
+    <dt>Upload rate</dt><dd>{{ upload_speed }} Mbps</dd>
+    <dt>Library ping</dt><dd>{{ ping }} ms</dd>
+  </dl>
+  <a href="/">Back to the interface</a>
+</body>
+</html>

@@ -1,4 +1,6 @@
-<h1 align="center">Speedtest Final</h1>
+This project explores how files are sent and received when measuring a connection speed.
+
+<h1 align="center">Network Transfer Lab</h1>
 
 <p align="center"><strong>Explore the mechanics behind a speed test.</strong></p>
 <p align="center">A Flask coursework prototype combining a browser timing interface with an experimental server-side transfer route.</p>
@@ -14,7 +16,7 @@
 
 This repository contains a Python, HTML and JavaScript speed-test experiment from a November 2023 coursework project. Its browser interface explores timed downloads, uploads and HTTP requests. A separate server route experiments with a larger download and speedtest-cli upload measurement.
 
-**The name “Final” identifies this repository, not a verified release status.** The tracked implementation has incomplete routes and calculation issues. It is suitable for studying the code and planning corrections, but the current output is not a validated bandwidth measurement.
+**This is an experimental coursework prototype.** Transfer routes, timing calculations and the server result template have received static fixes. The project remains an experiment whose output has not been validated as a bandwidth benchmark.
 
 ## Run the local interface
 
@@ -25,8 +27,8 @@ This repository contains a Python, HTML and JavaScript speed-test experiment fro
 | Browser with JavaScript | Timing interface |
 
 ```text
-git clone https://github.com/ArdaHFO/speedtestFinal.git
-cd speedtestFinal
+git clone https://github.com/ArdaHFO/network-transfer-lab.git
+cd network-transfer-lab
 python -m venv .venv
 ```
 
@@ -37,7 +39,7 @@ python -m pip install -r requirements.txt
 python -m flask --app app run --host 127.0.0.1 --port 8000
 ```
 
-Open [localhost:8000](http://127.0.0.1:8000). The Flask CLI keeps this preview on the local interface instead of using the script's all-interface debug launch. Dependency pins are historical and their compatibility with current Python installations has not been revalidated.
+Open [localhost:8000](http://127.0.0.1:8000). The Flask CLI and the application entry point both default to local access with debug mode disabled. Dependency pins are historical and their compatibility with current Python installations has not been revalidated.
 
 ## Inside the project
 
@@ -47,32 +49,32 @@ Open [localhost:8000](http://127.0.0.1:8000). The Flask CLI keeps this preview o
 - **Flask blueprints.** A small `views.py` module provides additional page routes.
 - **Transfer fixtures.** Several image files are included for experimentation.
 
-The backend does use speedtest-cli. The older README's claim that the project avoids its predefined measurement functions does not describe the current `app.py`.
+The backend uses speedtest-cli alongside custom transfer measurement.
 
 ## Browser and server paths
 
 | Component | Intended action | Current state |
 | --- | --- | --- |
-| Browser download | Fetch an external image and calculate a rate | Fixed assumed size and incorrect Mbps conversion |
-| Browser upload | Send a file to `POST /upload` | No matching backend route |
-| Browser ping | Time `GET /ping` | No matching backend route |
-| `POST /measure` | Download 100 MB and perform a library upload | Undefined variable and missing result template |
-| `GET /views/measure` | Display the result template | Template is absent |
+| Browser download | Fetch the bundled fixture and calculate a rate | Actual received bytes and elapsed seconds |
+| Browser upload | Send a file to `POST /upload` | Server confirms byte count without saving an application file |
+| Browser ping | Time `GET /ping` | Uncached `Pong` response |
+| `POST /measure` | Download 100 MB and perform a library upload | Renders the server result template |
+| `GET /views/measure` | Open the interface | Redirects instead of displaying empty results |
 
 Browser HTTP timing and server-originated transfers measure different paths. A result produced on a remote server describes that server's connectivity, not necessarily the user's connection.
 
 ## Validation and current limits
 
-The Python code, templates, routes and dependency manifest were reviewed. No external transfers, speed benchmarks or runtime integration tests were performed.
+The source has been reviewed statically. No application execution, automated tests, external transfers or benchmarks were performed for these changes.
 
-- `speed_test` refers to `startP`, which is not defined.
-- Both result routes reference `templates/measure.html`, which is not in this repository.
-- The browser's upload and ping handlers call endpoints that are not implemented. The JavaScript does not check HTTP success before displaying timing results.
-- Download size assumptions, time conversion and byte-to-bit conversion need correction before values can be described as Mbps.
-- The remote image and transfer service are external dependencies. Their availability and cross-origin behavior are not verified.
-- The unused system-ping helper is platform-dependent. The server's main entry point enables debug mode on all interfaces, so use the local preview command above.
+- Browser transfer rates use successful responses, actual payload bytes, elapsed seconds and decimal Mbps. The download fixture is the bundled `20MB.png`, with caching disabled.
+- Upload requests are limited to 32 MiB including multipart overhead. The server confirms the complete byte count without retaining a saved application file.
+- The server download calculation uses one measured duration and actual received bytes. Its result template is included. These paths have not been exercised at runtime.
+- Browser timing includes HTTP/application overhead. A local Flask server measures a local path, not ISP bandwidth.
+- The server measurement route depends on external transfer services and speedtest-cli. Current availability, accuracy and repeatability are not established.
+- The unused system-ping helper remains platform-dependent. Its invocation has a timeout and fixed request count.
 
-These are existing source limitations. This documentation update does not change the application. A useful next step is to complete the route-to-template flow, then validate units and actual byte counts with controlled fixtures before measuring an internet connection.
+Controlled route checks and repeated transfer measurements are still needed before making accuracy claims.
 
 ## Project map
 
@@ -80,6 +82,7 @@ These are existing source limitations. This documentation update does not change
 app.py                 Flask routes and server transfer experiment
 views.py               Additional page routes
 templates/index.html   Browser timing interface
+templates/measure.html Server transfer result view
 1MB.png, 5MB.png,
 10MB.png, 20MB.png      Transfer fixtures
 requirements.txt       Historical dependency versions
@@ -92,4 +95,3 @@ For a proposed change, state whether it affects browser timing or server timing.
 ## License and credits
 
 Distributed under the [MIT license](LICENSE). Flask, Requests, speedtest-cli and external services retain their own licenses and terms.
-
