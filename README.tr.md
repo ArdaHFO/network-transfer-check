@@ -1,30 +1,14 @@
-Bu uygulama, bir web sayfası ve ayrı sunucu ölçümleri üzerinden dosya aktarım hızlarını kontrol eder.
+Bu uygulama, tarayıcıda ve uygulamayı çalıştıran sunucuda dosya aktarım hızını ölçer.
 
-<h1 align="center">Network Transfer Check</h1>
+# Network Transfer Check
 
-<p align="center"><strong>Tarayıcı ve sunucu aktarım sürelerini karşılaştır.</strong></p>
-<p align="center">Tarayıcı zamanlama arayüzünü sunucu tarafındaki aktarım ölçümleriyle birleştiren Flask uygulaması.</p>
+[English](README.md) · [Türkçe](README.tr.md)
 
-<p align="center">
-  <a href="README.md">English</a> · <strong>Türkçe</strong><br />
-  <a href="#yerel-arayüzü-çalıştır"><strong>Yerel arayüzü çalıştır</strong></a> ·
-  <a href="#projede-neler-var">Projeye bakış</a> ·
-  <a href="#doğrulama-ve-mevcut-sınırlar">Mevcut sınırlar</a>
-</p>
+Flask uygulamasında iki ölçüm yolu vardır. Web sayfası, tarayıcı ile uygulama arasında dosya aktarır. `POST /measure` ise sunucudan thinkbroadband'e 100 MB indirme isteği yapar ve speedtest-cli ile yükleme ölçer.
 
----
+## Yerel kurulum
 
-Network Transfer Check, dosya aktarım sürelerini ölçmek için Python, HTML ve JavaScript kullanır. Tarayıcı arayüzü indirme, yükleme ve HTTP isteklerinin sürelerini ölçer. Ayrı bir sunucu rotası daha büyük bir dosyanın indirilmesini speedtest-cli yükleme ölçümüyle birleştirir.
-
-**Ölçüm doğruluğu henüz doğrulanmadı.** Aktarım rotalarına, zamanlama hesaplarına ve sunucu sonuç şablonuna statik düzeltmeler uygulandı. Çıktıların bant genişliği ölçümü olarak kullanılmadan önce kontrollü olarak doğrulanması gerekir.
-
-## Yerel arayüzü çalıştır
-
-| Gereksinim | Amaç |
-| --- | --- |
-| pip ve venv içeren Python 3 | Yalıtılmış geliştirme ortamı |
-| Flask, Requests ve speedtest-cli | Uygulamanın içe aktardığı bağımlılıklar |
-| JavaScript destekli tarayıcı | Zamanlama arayüzü |
+pip ve venv içeren Python 3 ile JavaScript destekli bir tarayıcı gerekir.
 
 ```text
 git clone https://github.com/ArdaHFO/network-transfer-check.git
@@ -32,66 +16,44 @@ cd network-transfer-check
 python -m venv .venv
 ```
 
-Windows Komut İstemi'nde `.venv\Scripts\activate`, macOS/Linux'ta `source .venv/bin/activate` ile ortamı etkinleştir. Kayıtlı bağımlılıkları kur ve yerel önizlemeyi başlat.
+Windows Komut İstemi'nde `.venv\Scripts\activate`, macOS/Linux'ta `source .venv/bin/activate` ile ortamı etkinleştir.
 
 ```text
 python -m pip install -r requirements.txt
 python -m flask --app app run --host 127.0.0.1 --port 8000
 ```
 
-[localhost:8000](http://127.0.0.1:8000) adresini aç. Flask CLI ve uygulamanın ana başlatıcısı varsayılan olarak debug kapalı, yerel erişim kullanır. Bağımlılık sürümleri geçmiş geliştirme ortamına aittir ve güncel Python kurulumlarıyla uyumlulukları yeniden doğrulanmadı.
+[localhost:8000](http://127.0.0.1:8000) adresini aç. [requirements.txt](requirements.txt) içindeki sabit sürümler ilk geliştirme ortamından gelir; yeni Python sürümleriyle uyumlulukları doğrulanmadı.
 
-## Projede neler var?
+## Ölçüm yolları
 
-- **Tarayıcı zamanlama arayüzü.** Ayrı kontroller indirme zamanlamasını, multipart yüklemeyi ve HTTP gidiş-dönüşünü örnekler.
-- **Özel sunucu indirmesi.** `speed_test` işlevi, yapılandırılmış dosyayı harici bir uç noktadan akış halinde indirir ve alınan baytları izler.
-- **Kütüphane karşılaştırması.** `POST /measure`, speedtest-cli ile yükleme ölçümü içerir ve ping sonucunu okur.
-- **Flask blueprint yapısı.** Küçük `views.py` modülü ek sayfa rotaları sağlar.
-- **Aktarım örnekleri.** Aktarım yükü olarak kullanılabilecek çeşitli görsel dosyaları bulunur.
+| İstek | İşlev |
+| --- | --- |
+| `GET /download` | Repodaki `20MB.png` dosyasını tarayıcıya gönderir |
+| `POST /upload` | Seçilen dosyayı okur, bir kopyasını kaydetmeden bayt sayısını döndürür |
+| `GET /ping` | Tarayıcının HTTP gidiş-dönüş süresini ölçebilmesi için `Pong` döndürür |
+| `POST /measure` | Harici indirme ve speedtest-cli yüklemesini yapıp sunucu sonuç sayfasını gösterir |
 
-Sunucu kodu, özel aktarım ölçümüyle birlikte speedtest-cli kullanır.
+Sayfadaki düğmeler ilk üç rotayı kullanır. Sunucu ölçümü ayrı bir POST isteğidir ve speedtest-cli'nin ping sonucunu da içerir. `GET /views/measure` ana sayfaya yönlendirir.
 
-## Tarayıcı ve sunucu yolları
+Tarayıcı yüklemeleri, multipart ek yükü dahil **32 MiB** ile sınırlıdır. İndirme ve ping yanıtları önbelleğe alınmaz.
 
-| Bileşen | Amaçlanan eylem | Mevcut durum |
-| --- | --- | --- |
-| Tarayıcı indirmesi | Paketlenmiş dosyayı getirip hız hesaplamak | Gerçek bayt sayısı ve geçen saniye |
-| Tarayıcı yüklemesi | Dosyayı `POST /upload` adresine göndermek | Sunucu uygulama dosyası kaydetmeden bayt sayısını doğrular |
-| Tarayıcı ping işlemi | `GET /ping` süresini ölçmek | Önbelleksiz `Pong` yanıtı |
-| `POST /measure` | 100 MB indirme ve kütüphane ile yükleme | Sunucu sonuç şablonunu gösterir |
-| `GET /views/measure` | Arayüzü açmak | Boş sonuç yerine arayüze yönlendirir |
+## Sınırlar
 
-Tarayıcıdaki HTTP zamanlamasıyla sunucudan başlayan aktarımlar farklı yolları ölçer. Uzak sunucuda üretilen sonuç sunucunun bağlantısını gösterir ve kullanıcının bağlantısını doğrudan temsil etmeyebilir.
-
-## Doğrulama ve mevcut sınırlar
-
-Kaynak statik olarak incelendi. Bu değişiklikler için uygulama, otomatik test, harici aktarım veya performans deneyi çalıştırılmadı.
-
-- Tarayıcı hız hesapları başarılı yanıtları, gerçek bayt sayısını, geçen saniyeyi ve ondalık Mbps dönüşümünü kullanır. İndirme dosyası paketlenmiş `20MB.png` olur ve önbellekleme kapatılır.
-- Yükleme istekleri multipart ek yükü dahil 32 MiB ile sınırlıdır. Sunucu kalıcı uygulama dosyası tutmadan tam bayt sayısını doğrular.
-- Sunucu indirme hesabı tek bir ölçülen süreyi ve gerçekten alınan baytları kullanır. Sonuç şablonu repoya dahildir. Bu yollar çalışma zamanında denenmedi.
-- Tarayıcı zamanlaması HTTP ve uygulama ek yükünü içerir. Yerel Flask sunucusu internet sağlayıcısının bant genişliğini değil yerel yolu ölçer.
-- Sunucu ölçüm rotası harici aktarım hizmetlerine ve speedtest-cli kütüphanesine bağlıdır. Güncel erişilebilirlik, doğruluk ve tekrarlanabilirlik belirlenmedi.
-- Kullanılmayan sistem ping yardımcısı platforma bağlı kalır. Çağrısında zaman aşımı ve sabit istek sayısı bulunur.
-
-Ölçüm doğruluğu iddiasından önce kontrollü rota kontrolleri ve tekrarlanan aktarım ölçümleri hâlâ gereklidir.
-
-## Proje yapısı
+Özel indirme hesabı ve tarayıcı aktarım hızları, gerçek bayt sayısını ve geçen saniyeyi kullanır:
 
 ```text
-app.py                 Flask rotaları ve sunucu aktarım ölçümleri
-views.py               Ek sayfa rotaları
-templates/index.html   Tarayıcı zamanlama arayüzü
-templates/measure.html Sunucu aktarım sonuç ekranı
-1MB.png, 5MB.png,
-10MB.png, 20MB.png      Aktarım örnekleri
-requirements.txt       Geçmiş bağımlılık sürümleri
+Mbps = bayt × 8 / saniye / 1.000.000
 ```
 
-## Geliştirme ve katkı
+HTTP ve uygulama işlemleri de süreye dahildir. Tarayıcıdaki Ping düğmesi ICMP ping yerine HTTP isteğini ölçer. `app.py` içindeki ayrı sistem ping yardımcısı kullanılmaz ve çıktı ayrıştırması platforma bağlıdır.
 
-Önerilen değişikliğin tarayıcı mı, sunucu zamanlaması mı etkilediğini belirt. Hata bildirimlerine rota, HTTP durumu, beklenen dosya boyutu ve hesabı ekle. Yerel rota kontrolleriyle ağ ölçümlerini ayır. Sayfanın başarıyla açılması, ölçüm doğruluğunun kanıtı değildir.
+Localhost aktarımı, yerel tarayıcı ile sunucu arasındaki yolu ölçer. Harici indirme ve speedtest-cli yüklemesi sunucunun bağlantısını ölçer. Uzak sunucuda çalışan uygulamanın bu sonuçları, ziyaretçinin bağlantısını doğrudan temsil etmez.
 
-## Lisans ve kaynaklar
+Bu yollar uçtan uca doğrulanmadı. Doğruluk, tekrarlanabilirlik ve harici hizmetlerin erişilebilirliği belirsizdir.
 
-[MIT lisansı](LICENSE) ile dağıtılır. Flask, Requests, speedtest-cli ve harici hizmetler kendi lisanslarına ve koşullarına tabidir.
+## Kod ve lisans
+
+Flask rotaları ve akış halinde indirme hesabı [app.py](app.py) içindedir. Tarayıcı kontrolleri [templates/index.html](templates/index.html), sunucu sonuçları [templates/measure.html](templates/measure.html) dosyasını kullanır. Alternatif rotalar [views.py](views.py) içindedir.
+
+[MIT lisansı](LICENSE). Flask, Requests, speedtest-cli ve harici hizmetler kendi lisanslarına ve koşullarına tabidir.
